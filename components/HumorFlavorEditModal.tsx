@@ -151,13 +151,13 @@ export default function HumorFlavorEditModal({
       {isMounted && isOpen
         ? createPortal(
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-6 py-8 backdrop-blur-sm">
-              <div className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-[#15151b]/95 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.7)]">
+              <div className="w-full max-w-xl rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface-strong)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-orange-300/80 [font-family:var(--font-heading)]">
+                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[var(--pc-accent-text)] [font-family:var(--font-heading)]">
                       Humor Flavors
                     </p>
-                    <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-zinc-100 [font-family:var(--font-heading)]">
+                    <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-[var(--pc-text)] [font-family:var(--font-heading)]">
                       {isCreateMode ? "Create Humor Flavor" : "Edit Humor Flavor"}
                     </h2>
                   </div>
@@ -166,7 +166,7 @@ export default function HumorFlavorEditModal({
                     type="button"
                     onClick={closeModal}
                     disabled={isWorking}
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-zinc-300 ring-1 ring-white/10 transition hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] transition hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                     aria-label="Close humor flavor modal"
                   >
                     <X className="h-5 w-5" />
@@ -175,19 +175,19 @@ export default function HumorFlavorEditModal({
 
                 <div className="mt-6 grid gap-4">
                   <label className="grid gap-2">
-                    <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+                    <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                       Slug
                     </span>
                     <input
                       type="text"
                       value={nextSlug}
                       onChange={(event) => setNextSlug(event.target.value)}
-                      className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+                      className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
                     />
                   </label>
 
                   <label className="grid gap-2">
-                    <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+                    <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                       Description
                     </span>
                     <textarea
@@ -196,13 +196,13 @@ export default function HumorFlavorEditModal({
                         setNextDescription(event.target.value)
                       }
                       rows={5}
-                      className="min-h-[8rem] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+                      className="min-h-[8rem] rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
                     />
                   </label>
                 </div>
 
                 {error ? (
-                  <p className="mt-4 text-sm text-rose-200/90">{error}</p>
+                  <p className="mt-4 text-sm text-[var(--pc-danger-text)]">{error}</p>
                 ) : null}
 
                 <div className="mt-6 flex justify-end gap-3">
@@ -210,7 +210,7 @@ export default function HumorFlavorEditModal({
                     type="button"
                     onClick={closeModal}
                     disabled={isWorking}
-                    className="rounded-xl bg-black/40 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-zinc-300/80 ring-1 ring-white/10 transition-colors hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-text-muted)] transition-colors hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     Cancel
                   </button>
@@ -218,7 +218,7 @@ export default function HumorFlavorEditModal({
                     type="button"
                     onClick={handleSave}
                     disabled={isWorking}
-                    className="rounded-xl bg-orange-500/15 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-orange-200 ring-2 ring-orange-400/50 shadow-[0_0_24px_rgba(255,120,0,0.2)] transition-colors hover:bg-orange-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl bg-[var(--pc-accent-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)] shadow-[0_0_24px_rgba(255,120,0,0.12)] transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isWorking
                       ? isCreateMode

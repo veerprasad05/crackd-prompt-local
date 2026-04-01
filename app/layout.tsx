@@ -3,6 +3,21 @@ import { Oxanium, Space_Grotesk } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import "./globals.css";
 
+const themeScript = `
+(() => {
+  const storageKey = "crackd-prompt-chain-theme";
+  const root = document.documentElement;
+  const stored = window.localStorage.getItem(storageKey);
+  const mode = stored === "light" || stored === "dark" || stored === "system"
+    ? stored
+    : "system";
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const resolved = mode === "system" ? (prefersDark ? "dark" : "light") : mode;
+  root.dataset.themeSetting = mode;
+  root.dataset.theme = resolved;
+})();
+`;
+
 const headingFont = Oxanium({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -26,20 +41,21 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
         className={[
           bodyFont.variable,
           headingFont.variable,
-          "min-h-screen text-zinc-100 antialiased",
-          "bg-[#0b0b10]",
-          "bg-[radial-gradient(900px_circle_at_78%_-10%,rgba(123,60,255,0.28),transparent_55%),radial-gradient(700px_circle_at_8%_12%,rgba(255,100,0,0.12),transparent_60%),linear-gradient(180deg,rgba(12,12,18,1),rgba(8,8,12,1))]",
+          "min-h-screen antialiased",
           "[font-family:var(--font-body)]",
         ].join(" ")}
       >
         <div className="min-h-screen w-full px-6 py-6">
           <div className="flex min-h-[calc(100vh-3rem)] gap-6">
-            <aside className="w-72 shrink-0">
+            <aside className="sticky top-6 h-[95vh] w-72 shrink-0 self-start">
               <Sidebar />
             </aside>
 

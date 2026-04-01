@@ -274,13 +274,13 @@ export default function HumorFlavorStepEditModal({
       {isMounted && isOpen
         ? createPortal(
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-6 py-8 backdrop-blur-sm">
-              <div className="flex h-[90vh] w-full max-w-4xl flex-col rounded-[2rem] border border-white/10 bg-[#15151b]/95 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.7)]">
+              <div className="flex h-[90vh] w-full max-w-4xl flex-col rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface-strong)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-orange-300/80 [font-family:var(--font-heading)]">
+                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[var(--pc-accent-text)] [font-family:var(--font-heading)]">
                       Humor Flavor Steps
                     </p>
-                    <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-zinc-100 [font-family:var(--font-heading)]">
+                    <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-[var(--pc-text)] [font-family:var(--font-heading)]">
                       {isCreateMode ? "Create Step" : "Edit Step"}
                     </h2>
                   </div>
@@ -289,7 +289,7 @@ export default function HumorFlavorStepEditModal({
                     type="button"
                     onClick={closeModal}
                     disabled={isWorking}
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-zinc-300 ring-1 ring-white/10 transition hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] transition hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                     aria-label="Close step modal"
                   >
                     <X className="h-5 w-5" />

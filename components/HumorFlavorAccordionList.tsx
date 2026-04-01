@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import { startTransition } from "react";
-import { ArrowDown, ArrowUp, ChevronDown, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
 import HumorFlavorEditModal from "@/components/HumorFlavorEditModal";
 import HumorFlavorStepEditModal from "@/components/HumorFlavorStepEditModal";
 import {
@@ -63,6 +65,7 @@ export default function HumorFlavorAccordionList({
   outputTypeOptions,
 }: HumorFlavorAccordionListProps) {
   const router = useRouter();
+  const [isMounted, setIsMounted] = React.useState(false);
   const [flavorItems, setFlavorItems] = React.useState(flavors);
   const [openFlavorIds, setOpenFlavorIds] = React.useState<
     Record<string, boolean>
@@ -76,8 +79,17 @@ export default function HumorFlavorAccordionList({
   const [reorderingFlavorId, setReorderingFlavorId] = React.useState<
     number | null
   >(null);
+  const [pendingFlavorDelete, setPendingFlavorDelete] = React.useState<{
+    id: number;
+    slug: string;
+  } | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const stepRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
+
+  React.useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
   React.useEffect(() => {
     setFlavorItems(flavors);
@@ -198,29 +210,37 @@ export default function HumorFlavorAccordionList({
     slug: string
   ) => {
     event.stopPropagation();
+    setPendingFlavorDelete({ id: flavorId, slug });
+  };
 
-    const confirmed = window.confirm(
-      `Delete the humor flavor "${slug}" and all of its steps?`
-    );
+  const closeDeleteModal = () => {
+    if (deletingFlavorId !== null) {
+      return;
+    }
 
-    if (!confirmed) {
+    setPendingFlavorDelete(null);
+  };
+
+  const confirmFlavorDelete = async () => {
+    if (!pendingFlavorDelete) {
       return;
     }
 
     try {
-      setDeletingFlavorId(flavorId);
+      setDeletingFlavorId(pendingFlavorDelete.id);
       setError(null);
 
       const supabase = createSupabaseBrowserClient();
       const { error: deleteError } = await supabase
         .from("humor_flavors")
         .delete()
-        .eq("id", flavorId);
+        .eq("id", pendingFlavorDelete.id);
 
       if (deleteError) {
         throw new Error(deleteError.message);
       }
 
+      setPendingFlavorDelete(null);
       startTransition(() => {
         router.refresh();
       });
@@ -373,130 +393,133 @@ export default function HumorFlavorAccordionList({
   };
 
   return (
-    <div className="space-y-4">
-      {error ? <p className="text-sm text-rose-200/90">{error}</p> : null}
+    <>
+      <div className="space-y-4">
+        {error ? <p className="text-sm text-rose-200/90">{error}</p> : null}
 
-      {flavorItems.map((flavor) => {
-        const isOpen = openFlavorIds[String(flavor.id)] === true;
-        const isDeleting = deletingFlavorId === flavor.id;
+        {flavorItems.map((flavor) => {
+          const isOpen = openFlavorIds[String(flavor.id)] === true;
+          const isDeleting = deletingFlavorId === flavor.id;
 
-        return (
-          <div
-            key={String(flavor.id)}
-            className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#15151b]/85 shadow-[0_18px_40px_rgba(0,0,0,0.55)]"
-          >
+          return (
+            <div
+              key={String(flavor.id)}
+              className="overflow-hidden rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface)] shadow-[0_18px_40px_rgba(0,0,0,0.18)]"
+            >
             <div className="relative">
-              <button
-                type="button"
-                onClick={() => toggleFlavor(flavor.id)}
-                className="flex w-full items-start gap-4 px-6 py-6 pr-40 text-left transition hover:bg-white/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-400/60"
-                aria-expanded={isOpen}
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
-                      Humor Flavor
-                    </p>
-                    <span className="rounded-full bg-black/40 px-3 py-1 text-[0.6rem] uppercase tracking-[0.28em] text-zinc-300/80 ring-1 ring-white/10">
-                      {flavor.steps.length} {flavor.steps.length === 1 ? "Step" : "Steps"}
-                    </span>
-                  </div>
+                <div className="px-6 py-6 pr-40">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
+                        Humor Flavor
+                      </p>
+                      <span className="rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-3 py-1 text-[0.6rem] uppercase tracking-[0.28em] text-[var(--pc-text-muted)]">
+                        {flavor.steps.length} {flavor.steps.length === 1 ? "Step" : "Steps"}
+                      </span>
+                      <Link
+                        href={`/captions?humorFlavorId=${String(flavor.id)}`}
+                        className="inline-flex items-center gap-2 rounded-full border border-[var(--pc-accent-ring)] bg-[var(--pc-accent-soft)] px-3 py-1 text-[0.6rem] uppercase tracking-[0.28em] text-[var(--pc-accent-text)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
+                      >
+                        <span>View Captions Generated By This Flavor</span>
+                        <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+                      </Link>
+                    </div>
 
-                  <h2 className="mt-3 text-2xl uppercase tracking-[0.16em] text-zinc-100 [font-family:var(--font-heading)]">
+                  <h2 className="mt-3 text-2xl uppercase tracking-[0.16em] text-[var(--pc-text)] [font-family:var(--font-heading)]">
                     {flavor.slug}
                   </h2>
 
-                  <p className="mt-3 max-w-3xl text-sm text-zinc-300/80">
-                    {flavor.description ?? "No description."}
-                  </p>
+                    <p className="mt-3 max-w-3xl text-sm text-[var(--pc-text-muted)]">
+                      {flavor.description ?? "No description."}
+                    </p>
 
-                  <p className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                  <p className="mt-4 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                     Created {formatReadableDate(flavor.createdAt)}
                   </p>
                 </div>
-              </button>
+                </div>
 
-              <div className="absolute right-5 top-5 flex items-center gap-2">
-                <HumorFlavorStepEditModal
-                  defaultHumorFlavorId={flavor.id}
-                  defaultHumorFlavorLabel={flavor.slug}
-                  defaultOrderBy={
-                    flavor.steps.length > 0
-                      ? Math.max(...flavor.steps.map((step) => step.orderBy)) + 1
-                      : 1
-                  }
-                  flavorOptions={flavorOptions}
-                  stepTypeOptions={stepTypeOptions}
-                  modelOptions={modelOptions}
-                  inputTypeOptions={inputTypeOptions}
-                  outputTypeOptions={outputTypeOptions}
-                  triggerIcon="create"
-                  triggerAriaLabel={`Create step for humor flavor ${flavor.slug}`}
-                />
-
-                <HumorFlavorEditModal
-                  flavorId={flavor.id}
-                  slug={flavor.slug}
-                  description={flavor.description}
-                />
-
-                <button
-                  type="button"
-                  onClick={(event) =>
-                    handleDelete(event, flavor.id, flavor.slug)
-                  }
-                  disabled={isDeleting}
-                  aria-label={`Delete humor flavor ${flavor.slug}`}
-                  className={[
-                    "rounded-full p-2.5 transition",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60",
-                    isDeleting
-                      ? "cursor-not-allowed bg-rose-500/10 text-rose-200/60 ring-1 ring-rose-400/20"
-                      : "bg-black/40 text-zinc-300/80 ring-1 ring-white/10 hover:bg-rose-500/15 hover:text-rose-200 hover:ring-rose-400/40",
-                  ].join(" ")}
-                >
-                  <Trash2 className="h-4 w-4" aria-hidden="true" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => toggleFlavor(flavor.id)}
-                  aria-label={
-                    isOpen
-                      ? `Collapse humor flavor ${flavor.slug}`
-                      : `Expand humor flavor ${flavor.slug}`
-                  }
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-zinc-300/80 ring-1 ring-white/10 transition hover:bg-black/60 hover:text-orange-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
-                >
-                  <ChevronDown
-                    className={[
-                      "h-4 w-4 transition-transform",
-                      isOpen ? "rotate-180 text-orange-200" : "",
-                    ].join(" ")}
-                    aria-hidden="true"
+                <div className="absolute right-5 top-5 flex items-center gap-2">
+                  <HumorFlavorStepEditModal
+                    defaultHumorFlavorId={flavor.id}
+                    defaultHumorFlavorLabel={flavor.slug}
+                    defaultOrderBy={
+                      flavor.steps.length > 0
+                        ? Math.max(...flavor.steps.map((step) => step.orderBy)) + 1
+                        : 1
+                    }
+                    flavorOptions={flavorOptions}
+                    stepTypeOptions={stepTypeOptions}
+                    modelOptions={modelOptions}
+                    inputTypeOptions={inputTypeOptions}
+                    outputTypeOptions={outputTypeOptions}
+                    triggerIcon="create"
+                    triggerAriaLabel={`Create step for humor flavor ${flavor.slug}`}
                   />
-                </button>
-              </div>
-            </div>
 
-            {isOpen ? (
-              <div className="border-t border-white/10 bg-black/20 px-6 py-5">
-                {flavor.steps.length === 0 ? (
-                  <p className="text-sm text-zinc-400/80">No steps found.</p>
-                ) : (
-                  <div className="space-y-4">
-                    {flavor.steps.map((step, stepIndex) => (
-                      <div
-                        key={String(step.id)}
-                        ref={(node) => {
-                          stepRefs.current[getStepRefKey(flavor.id, step.id)] = node;
-                        }}
-                        className="rounded-2xl border border-white/10 bg-black/30 p-4 transition-transform duration-300 ease-out"
-                      >
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div className="flex flex-wrap items-center gap-3">
-                            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-400/60 bg-[#15151b] text-sm font-semibold text-orange-200 shadow-[0_0_18px_rgba(255,120,0,0.18)]">
-                              {step.orderBy}
+                  <HumorFlavorEditModal
+                    flavorId={flavor.id}
+                    slug={flavor.slug}
+                    description={flavor.description}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={(event) =>
+                      handleDelete(event, flavor.id, flavor.slug)
+                    }
+                    disabled={isDeleting}
+                    aria-label={`Delete humor flavor ${flavor.slug}`}
+                    className={[
+                      "rounded-full p-2.5 transition",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]",
+                      isDeleting
+                        ? "cursor-not-allowed bg-[var(--pc-danger-soft)] text-[var(--pc-danger-text)] opacity-60 ring-1 ring-[var(--pc-danger-ring)]"
+                        : "border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] hover:bg-[var(--pc-danger-soft)] hover:text-[var(--pc-danger-text)] hover:ring-1 hover:ring-[var(--pc-danger-ring)]",
+                    ].join(" ")}
+                  >
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleFlavor(flavor.id)}
+                    aria-label={
+                      isOpen
+                        ? `Collapse humor flavor ${flavor.slug}`
+                        : `Expand humor flavor ${flavor.slug}`
+                    }
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] transition hover:text-[var(--pc-accent-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
+                  >
+                    <ChevronDown
+                      className={[
+                        "h-4 w-4 transition-transform",
+                        isOpen ? "rotate-180 text-orange-200" : "",
+                      ].join(" ")}
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {isOpen ? (
+                <div className="border-t border-[color:var(--pc-border)] bg-[var(--pc-surface-muted)] px-6 py-5">
+                  {flavor.steps.length === 0 ? (
+                    <p className="text-sm text-[var(--pc-text-faint)]">No steps found.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {flavor.steps.map((step, stepIndex) => (
+                        <div
+                          key={String(step.id)}
+                          ref={(node) => {
+                            stepRefs.current[getStepRefKey(flavor.id, step.id)] = node;
+                          }}
+                          className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] p-4 transition-transform duration-300 ease-out"
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="flex flex-wrap items-center gap-3">
+                              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-400/60 bg-[#15151b] text-sm font-semibold text-orange-200 shadow-[0_0_18px_rgba(255,120,0,0.18)]">
+                                {step.orderBy}
                             </span>
                             <span className="rounded-full bg-black/40 px-3 py-1 text-[0.6rem] uppercase tracking-[0.28em] text-zinc-300/80 ring-1 ring-white/10">
                               {step.stepTypeName}
@@ -643,15 +666,60 @@ export default function HumorFlavorAccordionList({
                             </p>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      {isMounted && pendingFlavorDelete
+        ? createPortal(
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-6 py-8 backdrop-blur-sm">
+              <div className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-[#15151b]/95 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.7)]">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-orange-300/80 [font-family:var(--font-heading)]">
+                      Humor Flavors
+                    </p>
+                    <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-zinc-100 [font-family:var(--font-heading)]">
+                      Delete Humor Flavor
+                    </h2>
                   </div>
-                )}
+                </div>
+
+                <p className="mt-6 text-sm text-zinc-300/80">
+                  Delete the humor flavor "{pendingFlavorDelete.slug}" and all of
+                  its steps?
+                </p>
+
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeDeleteModal}
+                    disabled={deletingFlavorId !== null}
+                    className="rounded-xl bg-black/40 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-zinc-300/80 ring-1 ring-white/10 transition-colors hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmFlavorDelete}
+                    disabled={deletingFlavorId !== null}
+                    className="rounded-xl bg-rose-500/15 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-rose-200 ring-2 ring-rose-400/40 transition-colors hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {deletingFlavorId !== null ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
               </div>
-            ) : null}
-          </div>
-        );
-      })}
-    </div>
+            </div>,
+            document.body
+          )
+        : null}
+    </>
   );
 }

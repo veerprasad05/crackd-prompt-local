@@ -21,7 +21,7 @@ export default function Pagination({
 
   return (
     <nav
-      className="mt-12 flex flex-wrap items-center justify-center gap-2 text-[0.65rem] uppercase tracking-[0.4em] text-zinc-400/80"
+      className="mt-12 flex flex-wrap items-center justify-center gap-2 text-[0.65rem] uppercase tracking-[0.4em] text-[var(--pc-text-faint)]"
       aria-label="Pagination"
     >
       <Link
@@ -33,10 +33,10 @@ export default function Pagination({
         aria-disabled={currentPage === 1}
         aria-label="Previous page"
         className={[
-          "rounded-full px-3 py-2 ring-1 ring-white/10 transition",
+          "rounded-full border border-[color:var(--pc-border)] px-3 py-2 transition",
           currentPage === 1
             ? "pointer-events-none opacity-40"
-            : "hover:text-orange-200 hover:ring-orange-400/60",
+            : "hover:text-[var(--pc-accent-text)] hover:ring-2 hover:ring-[var(--pc-accent-ring)]",
         ].join(" ")}
       >
         <Rewind className="h-4 w-4" aria-hidden="true" />
@@ -59,10 +59,10 @@ export default function Pagination({
             href={buildPageHref(pathname, item, queryParams)}
             aria-current={isActive ? "page" : undefined}
             className={[
-              "inline-flex min-w-[2.5rem] items-center justify-center rounded-full px-3 py-2 text-center ring-1 ring-white/10 transition",
+              "inline-flex min-w-[2.5rem] items-center justify-center rounded-full border border-[color:var(--pc-border)] px-3 py-2 text-center transition",
               isActive
-                ? "text-orange-200 ring-2 ring-orange-400/70 shadow-[0_0_16px_rgba(255,120,0,0.35)]"
-                : "hover:text-orange-200 hover:ring-orange-400/60",
+                ? "bg-[var(--pc-accent-soft)] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)] shadow-[0_0_16px_rgba(255,120,0,0.12)]"
+                : "hover:text-[var(--pc-accent-text)] hover:ring-2 hover:ring-[var(--pc-accent-ring)]",
             ].join(" ")}
           >
             {item}
@@ -79,10 +79,10 @@ export default function Pagination({
         aria-disabled={currentPage === totalPages}
         aria-label="Next page"
         className={[
-          "rounded-full px-3 py-2 ring-1 ring-white/10 transition",
+          "rounded-full border border-[color:var(--pc-border)] px-3 py-2 transition",
           currentPage === totalPages
             ? "pointer-events-none opacity-40"
-            : "hover:text-orange-200 hover:ring-orange-400/60",
+            : "hover:text-[var(--pc-accent-text)] hover:ring-2 hover:ring-[var(--pc-accent-ring)]",
         ].join(" ")}
       >
         <FastForward className="h-4 w-4" aria-hidden="true" />

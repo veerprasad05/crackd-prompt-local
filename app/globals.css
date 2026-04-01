@@ -4,9 +4,81 @@
 
 :root {
   color-scheme: dark;
+  --pc-bg: #0b0b10;
+  --pc-bg-image: radial-gradient(
+      900px circle at 78% -10%,
+      rgba(123, 60, 255, 0.28),
+      transparent 55%
+    ),
+    radial-gradient(
+      700px circle at 8% 12%,
+      rgba(255, 100, 0, 0.12),
+      transparent 60%
+    ),
+    linear-gradient(180deg, rgba(12, 12, 18, 1), rgba(8, 8, 12, 1));
+  --pc-surface: rgba(21, 21, 27, 0.9);
+  --pc-surface-strong: rgba(16, 16, 22, 0.95);
+  --pc-surface-soft: rgba(0, 0, 0, 0.4);
+  --pc-surface-muted: rgba(0, 0, 0, 0.22);
+  --pc-text: rgb(244 244 245);
+  --pc-text-muted: rgba(212, 212, 216, 0.86);
+  --pc-text-faint: rgba(161, 161, 170, 0.9);
+  --pc-border: rgba(255, 255, 255, 0.1);
+  --pc-accent: #f97316;
+  --pc-accent-soft: rgba(249, 115, 22, 0.15);
+  --pc-accent-ring: rgba(251, 146, 60, 0.5);
+  --pc-accent-text: #fed7aa;
+  --pc-danger-soft: rgba(244, 63, 94, 0.15);
+  --pc-danger-ring: rgba(251, 113, 133, 0.4);
+  --pc-danger-text: #fecdd3;
+  --pc-success-ring: rgba(52, 211, 153, 0.4);
+  --pc-success-text: #bbf7d0;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --pc-bg: #f6f2eb;
+  --pc-bg-image: radial-gradient(
+      900px circle at 82% -6%,
+      rgba(255, 157, 0, 0.2),
+      transparent 55%
+    ),
+    radial-gradient(
+      700px circle at 10% 14%,
+      rgba(255, 93, 0, 0.14),
+      transparent 58%
+    ),
+    linear-gradient(180deg, #fffaf4, #efe7db);
+  --pc-surface: rgba(255, 250, 244, 0.88);
+  --pc-surface-strong: rgba(255, 252, 248, 0.96);
+  --pc-surface-soft: rgba(255, 255, 255, 0.82);
+  --pc-surface-muted: rgba(121, 82, 55, 0.08);
+  --pc-text: #18181b;
+  --pc-text-muted: rgba(39, 39, 42, 0.86);
+  --pc-text-faint: rgba(82, 82, 91, 0.88);
+  --pc-border: rgba(24, 24, 27, 0.12);
+  --pc-accent: #ea580c;
+  --pc-accent-soft: rgba(234, 88, 12, 0.12);
+  --pc-accent-ring: rgba(234, 88, 12, 0.34);
+  --pc-accent-text: #9a3412;
+  --pc-danger-soft: rgba(225, 29, 72, 0.11);
+  --pc-danger-ring: rgba(225, 29, 72, 0.22);
+  --pc-danger-text: #be123c;
+  --pc-success-ring: rgba(5, 150, 105, 0.24);
+  --pc-success-text: #047857;
 }
 
 html,
 body {
   min-height: 100%;
+}
+
+body {
+  background-color: var(--pc-bg);
+  background-image: var(--pc-bg-image);
+  color: var(--pc-text);
+  transition:
+    background-color 220ms ease,
+    color 220ms ease,
+    background-image 220ms ease;
 }

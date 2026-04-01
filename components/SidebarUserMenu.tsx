@@ -134,14 +134,14 @@ export default function SidebarUserMenu() {
       : "Sign in with Google";
 
   return (
-    <div ref={containerRef} className="relative flex items-center justify-center">
+    <div ref={containerRef} className="relative">
       <button
         type="button"
         className={[
           "flex h-12 w-12 items-center justify-center rounded-full",
-          "bg-black/40 text-zinc-300/80 ring-1 ring-white/10",
-          "transition hover:bg-black/60 hover:text-zinc-100",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60",
+          "border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)]",
+          "transition hover:text-[var(--pc-text)]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]",
         ].join(" ")}
         aria-haspopup="menu"
         aria-expanded={menuOpen}
@@ -156,8 +156,8 @@ export default function SidebarUserMenu() {
           role="menu"
           className={[
             "absolute bottom-14 left-1/2 w-56 -translate-x-1/2",
-            "rounded-2xl border border-white/10 bg-[#101016]/95 p-3",
-            "shadow-[0_16px_40px_rgba(0,0,0,0.55)] backdrop-blur",
+            "rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-strong)] p-3",
+            "shadow-[0_16px_40px_rgba(0,0,0,0.28)] backdrop-blur",
           ].join(" ")}
         >
           <button
@@ -166,10 +166,10 @@ export default function SidebarUserMenu() {
             className={[
               "w-full rounded-xl px-3 py-2 text-[0.65rem] uppercase tracking-[0.32em]",
               signedIn
-                ? "bg-black/40 text-zinc-200 ring-1 ring-white/10"
-                : "bg-orange-500/15 text-orange-200 ring-2 ring-orange-400/50 shadow-[0_0_16px_rgba(255,120,0,0.2)]",
-              "transition-colors hover:bg-black/60 hover:text-zinc-100",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60",
+                ? "border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text)]"
+                : "bg-[var(--pc-accent-soft)] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)]",
+              "transition-colors hover:text-[var(--pc-text)]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]",
               "disabled:cursor-not-allowed disabled:opacity-60",
             ].join(" ")}
             onClick={handleAction}
@@ -177,7 +177,9 @@ export default function SidebarUserMenu() {
           >
             {busy ? "Working..." : actionLabel}
           </button>
-          {error ? <p className="mt-2 text-xs text-rose-200/90">{error}</p> : null}
+          {error ? (
+            <p className="mt-2 text-xs text-[var(--pc-danger-text)]">{error}</p>
+          ) : null}
         </div>
       ) : null}
     </div>

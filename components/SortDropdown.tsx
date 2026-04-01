@@ -21,12 +21,12 @@ export default function SortDropdown({ value, options }: SortDropdownProps) {
   };
 
   return (
-    <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-[0.65rem] uppercase tracking-[0.28em] text-zinc-300/80 shadow-[0_12px_28px_rgba(0,0,0,0.45)]">
+    <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-muted)] shadow-[0_12px_28px_rgba(0,0,0,0.18)]">
       <span>Sort By</span>
       <select
         value={value}
         onChange={(event) => handleChange(event.target.value)}
-        className="rounded-xl border border-white/10 bg-[#101016] px-3 py-2 text-[0.65rem] uppercase tracking-[0.28em] text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+        className="rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-strong)] px-3 py-2 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
         aria-label="Sort order"
       >
         {options.map((option) => (

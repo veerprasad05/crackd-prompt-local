@@ -3,18 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SidebarUserMenu from "@/components/SidebarUserMenu";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
   { href: "/humor-flavors", label: "Humor Flavors" },
   { href: "/caption-tester", label: "Caption Tester" },
+  { href: "/captions", label: "Captions" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-full flex-col rounded-2xl bg-[#15151b]/90 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_18px_50px_rgba(0,0,0,0.7)] ring-1 ring-white/10 backdrop-blur">
-      <div className="mb-5 text-center text-[0.7rem] uppercase tracking-[0.4em] text-orange-300/80 [font-family:var(--font-heading)]">
+    <div className="flex h-full flex-col rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur">
+      <div className="mb-5 text-center text-[0.7rem] uppercase tracking-[0.4em] text-[var(--pc-accent-text)] [font-family:var(--font-heading)]">
         Crackd Prompt Chain
       </div>
 
@@ -28,11 +30,11 @@ export default function Sidebar() {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={[
-                "rounded-xl bg-black/40 px-4 py-3 text-center text-[0.7rem] uppercase tracking-[0.32em] text-zinc-300/80 ring-1 ring-white/10",
-                "transition-colors hover:bg-black/60 hover:text-zinc-100",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50",
+                "rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-center text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-text-muted)]",
+                "transition-colors hover:text-[var(--pc-text)]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]",
                 active
-                  ? "bg-orange-500/15 text-orange-200 ring-2 ring-orange-400/50 shadow-[0_0_24px_rgba(255,120,0,0.25)]"
+                  ? "bg-[var(--pc-accent-soft)] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)] shadow-[0_0_24px_rgba(255,120,0,0.12)]"
                   : "",
               ].join(" ")}
             >
@@ -42,7 +44,8 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto pt-6">
+      <div className="mt-auto flex items-center justify-center gap-3 pt-6">
+        <ThemeToggle />
         <SidebarUserMenu />
       </div>
     </div>
