@@ -3,9 +3,16 @@
 import * as React from "react";
 import { startTransition } from "react";
 import Link from "next/link";
-import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronDown,
+  ChevronRight,
+  Trash2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
+import HumorFlavorDuplicateModal from "@/components/HumorFlavorDuplicateModal";
 import HumorFlavorEditModal from "@/components/HumorFlavorEditModal";
 import HumorFlavorStepEditModal from "@/components/HumorFlavorStepEditModal";
 import {
@@ -395,7 +402,9 @@ export default function HumorFlavorAccordionList({
   return (
     <>
       <div className="space-y-4">
-        {error ? <p className="text-sm text-rose-200/90">{error}</p> : null}
+        {error ? (
+          <p className="text-sm text-[var(--pc-danger-text)]">{error}</p>
+        ) : null}
 
         {flavorItems.map((flavor) => {
           const isOpen = openFlavorIds[String(flavor.id)] === true;
@@ -407,7 +416,7 @@ export default function HumorFlavorAccordionList({
               className="overflow-hidden rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface)] shadow-[0_18px_40px_rgba(0,0,0,0.18)]"
             >
             <div className="relative">
-                <div className="px-6 py-6 pr-40">
+                <div className="px-6 py-6 pr-6 sm:pr-[15rem]">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
                       <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
@@ -439,7 +448,7 @@ export default function HumorFlavorAccordionList({
                 </div>
                 </div>
 
-                <div className="absolute right-5 top-5 flex items-center gap-2">
+                <div className="mt-4 flex flex-wrap items-center gap-2 px-6 pb-6 sm:absolute sm:right-5 sm:top-5 sm:mt-0 sm:px-0 sm:pb-0">
                   <HumorFlavorStepEditModal
                     defaultHumorFlavorId={flavor.id}
                     defaultHumorFlavorLabel={flavor.slug}
@@ -455,6 +464,13 @@ export default function HumorFlavorAccordionList({
                     outputTypeOptions={outputTypeOptions}
                     triggerIcon="create"
                     triggerAriaLabel={`Create step for humor flavor ${flavor.slug}`}
+                  />
+
+                  <HumorFlavorDuplicateModal
+                    sourceSlug={flavor.slug}
+                    sourceDescription={flavor.description}
+                    steps={flavor.steps}
+                    existingSlugs={flavorOptions.map((option) => option.label)}
                   />
 
                   <HumorFlavorEditModal
@@ -494,7 +510,7 @@ export default function HumorFlavorAccordionList({
                     <ChevronDown
                       className={[
                         "h-4 w-4 transition-transform",
-                        isOpen ? "rotate-180 text-orange-200" : "",
+                        isOpen ? "rotate-180 text-[var(--pc-accent-text)]" : "",
                       ].join(" ")}
                       aria-hidden="true"
                     />
@@ -518,13 +534,13 @@ export default function HumorFlavorAccordionList({
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div className="flex flex-wrap items-center gap-3">
-                              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-400/60 bg-[#15151b] text-sm font-semibold text-orange-200 shadow-[0_0_18px_rgba(255,120,0,0.18)]">
+                              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pc-accent-ring)] bg-[var(--pc-accent-soft)] text-sm font-semibold text-[var(--pc-accent-text)] shadow-[0_0_18px_rgba(255,120,0,0.12)]">
                                 {step.orderBy}
-                            </span>
-                            <span className="rounded-full bg-black/40 px-3 py-1 text-[0.6rem] uppercase tracking-[0.28em] text-zinc-300/80 ring-1 ring-white/10">
-                              {step.stepTypeName}
-                            </span>
-                          </div>
+                              </span>
+                              <span className="rounded-full border border-[color:var(--pc-badge-border)] bg-[var(--pc-badge-surface)] px-3 py-1 text-[0.6rem] uppercase tracking-[0.28em] text-[var(--pc-badge-text)]">
+                                {step.stepTypeName}
+                              </span>
+                            </div>
 
                           <div className="flex items-center gap-2">
                             <HumorFlavorStepEditModal
@@ -549,10 +565,10 @@ export default function HumorFlavorAccordionList({
                               aria-label={`Delete step ${String(step.orderBy)}`}
                               className={[
                                 "rounded-full p-2.5 transition",
-                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60",
+                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]",
                                 deletingStepId === step.id
-                                  ? "cursor-not-allowed bg-rose-500/10 text-rose-200/60 ring-1 ring-rose-400/20"
-                                  : "bg-black/40 text-zinc-300/80 ring-1 ring-white/10 hover:bg-rose-500/15 hover:text-rose-200 hover:ring-rose-400/40",
+                                  ? "cursor-not-allowed bg-[var(--pc-danger-soft)] text-[var(--pc-danger-text)] opacity-60 ring-1 ring-[var(--pc-danger-ring)]"
+                                  : "border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] hover:bg-[var(--pc-danger-soft)] hover:text-[var(--pc-danger-text)] hover:ring-1 hover:ring-[var(--pc-danger-ring)]",
                               ].join(" ")}
                             >
                               <Trash2 className="h-4 w-4" aria-hidden="true" />
@@ -568,10 +584,10 @@ export default function HumorFlavorAccordionList({
                                 aria-label={`Move step ${String(step.orderBy)} up`}
                                 className={[
                                   "rounded-full p-2.5 transition",
-                                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60",
+                                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]",
                                   reorderingFlavorId === flavor.id
-                                    ? "cursor-not-allowed bg-black/30 text-zinc-500 ring-1 ring-white/5"
-                                    : "bg-black/40 text-zinc-300/80 ring-1 ring-white/10 hover:bg-orange-500/15 hover:text-orange-200 hover:ring-orange-400/40",
+                                    ? "cursor-not-allowed border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-faint)] opacity-60"
+                                    : "border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] hover:bg-[var(--pc-accent-soft)] hover:text-[var(--pc-accent-text)] hover:ring-1 hover:ring-[var(--pc-accent-ring)]",
                                 ].join(" ")}
                               >
                                 <ArrowUp className="h-4 w-4" aria-hidden="true" />
@@ -588,10 +604,10 @@ export default function HumorFlavorAccordionList({
                                 aria-label={`Move step ${String(step.orderBy)} down`}
                                 className={[
                                   "rounded-full p-2.5 transition",
-                                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60",
+                                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]",
                                   reorderingFlavorId === flavor.id
-                                    ? "cursor-not-allowed bg-black/30 text-zinc-500 ring-1 ring-white/5"
-                                    : "bg-black/40 text-zinc-300/80 ring-1 ring-white/10 hover:bg-orange-500/15 hover:text-orange-200 hover:ring-orange-400/40",
+                                    ? "cursor-not-allowed border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-faint)] opacity-60"
+                                    : "border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] hover:bg-[var(--pc-accent-soft)] hover:text-[var(--pc-accent-text)] hover:ring-1 hover:ring-[var(--pc-accent-ring)]",
                                 ].join(" ")}
                               >
                                 <ArrowDown className="h-4 w-4" aria-hidden="true" />
@@ -602,66 +618,66 @@ export default function HumorFlavorAccordionList({
 
                         <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                           <div>
-                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                               Model
                             </p>
-                            <p className="mt-2 text-sm text-zinc-100">
+                            <p className="mt-2 text-sm text-[var(--pc-text)]">
                               {step.modelName}
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                               Input
                             </p>
-                            <p className="mt-2 text-sm text-zinc-100">
+                            <p className="mt-2 text-sm text-[var(--pc-text)]">
                               {step.inputTypeName}
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                               Output
                             </p>
-                            <p className="mt-2 text-sm text-zinc-100">
+                            <p className="mt-2 text-sm text-[var(--pc-text)]">
                               {step.outputTypeName}
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                               Temperature
                             </p>
-                            <p className="mt-2 text-sm text-zinc-100">
+                            <p className="mt-2 text-sm text-[var(--pc-text)]">
                               {step.llmTemperature ?? "N/A"}
                             </p>
                           </div>
                         </div>
 
                         <div className="mt-4">
-                          <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                          <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                             Description
                           </p>
-                          <p className="mt-2 whitespace-pre-wrap break-words text-sm text-zinc-100">
+                          <p className="mt-2 whitespace-pre-wrap break-words text-sm text-[var(--pc-text)]">
                             {step.description ?? "No description."}
                           </p>
                         </div>
 
                         <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                          <div className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-muted)] p-4">
+                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                               User Prompt
                             </p>
-                            <p className="mt-2 whitespace-pre-wrap break-words text-sm text-zinc-100">
+                            <p className="mt-2 whitespace-pre-wrap break-words text-sm text-[var(--pc-text)]">
                               {step.llmUserPrompt ?? "No user prompt."}
                             </p>
                           </div>
 
-                          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                          <div className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-muted)] p-4">
+                            <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                               System Prompt
                             </p>
-                            <p className="mt-2 whitespace-pre-wrap break-words text-sm text-zinc-100">
+                            <p className="mt-2 whitespace-pre-wrap break-words text-sm text-[var(--pc-text)]">
                               {step.llmSystemPrompt ?? "No system prompt."}
                             </p>
                           </div>
@@ -679,20 +695,20 @@ export default function HumorFlavorAccordionList({
 
       {isMounted && pendingFlavorDelete
         ? createPortal(
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-6 py-8 backdrop-blur-sm">
-              <div className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-[#15151b]/95 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.7)]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--pc-overlay)] px-6 py-8 backdrop-blur-sm">
+              <div className="w-full max-w-xl rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface-elevated)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-orange-300/80 [font-family:var(--font-heading)]">
+                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[var(--pc-accent-text)] [font-family:var(--font-heading)]">
                       Humor Flavors
                     </p>
-                    <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-zinc-100 [font-family:var(--font-heading)]">
+                    <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-[var(--pc-text)] [font-family:var(--font-heading)]">
                       Delete Humor Flavor
                     </h2>
                   </div>
                 </div>
 
-                <p className="mt-6 text-sm text-zinc-300/80">
+                <p className="mt-6 text-sm text-[var(--pc-text-muted)]">
                   Delete the humor flavor "{pendingFlavorDelete.slug}" and all of
                   its steps?
                 </p>
@@ -702,7 +718,7 @@ export default function HumorFlavorAccordionList({
                     type="button"
                     onClick={closeDeleteModal}
                     disabled={deletingFlavorId !== null}
-                    className="rounded-xl bg-black/40 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-zinc-300/80 ring-1 ring-white/10 transition-colors hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-text-muted)] transition-colors hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     Cancel
                   </button>
@@ -710,7 +726,7 @@ export default function HumorFlavorAccordionList({
                     type="button"
                     onClick={confirmFlavorDelete}
                     disabled={deletingFlavorId !== null}
-                    className="rounded-xl bg-rose-500/15 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-rose-200 ring-2 ring-rose-400/40 transition-colors hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl bg-[var(--pc-danger-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-danger-text)] ring-2 ring-[var(--pc-danger-ring)] transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-danger-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {deletingFlavorId !== null ? "Deleting..." : "Delete"}
                   </button>

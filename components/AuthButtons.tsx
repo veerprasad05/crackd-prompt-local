@@ -54,7 +54,7 @@ export default function AuthButtons({ mode = "full" }: AuthButtonsProps) {
     <div className="mt-6 flex flex-col items-center gap-3">
       <div className="flex gap-3">
         <button
-          className="rounded-xl bg-orange-500/15 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-orange-200 ring-2 ring-orange-400/50 shadow-[0_0_24px_rgba(255,120,0,0.25)] transition-colors hover:bg-orange-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-xl bg-[var(--pc-accent-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)] shadow-[0_0_24px_rgba(255,120,0,0.12)] transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
           onClick={handleSignIn}
           disabled={loading}
         >
@@ -62,7 +62,7 @@ export default function AuthButtons({ mode = "full" }: AuthButtonsProps) {
         </button>
         {mode === "full" ? (
           <button
-            className="rounded-xl bg-black/40 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-zinc-300/80 ring-1 ring-white/10 transition-colors hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-text-muted)] transition-colors hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={handleSignOut}
             disabled={loading}
           >
@@ -70,7 +70,9 @@ export default function AuthButtons({ mode = "full" }: AuthButtonsProps) {
           </button>
         ) : null}
       </div>
-      {error ? <p className="text-xs text-red-300">{error}</p> : null}
+      {error ? (
+        <p className="text-xs text-[var(--pc-danger-text)]">{error}</p>
+      ) : null}
     </div>
   );
 }

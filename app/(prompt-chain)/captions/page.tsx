@@ -142,13 +142,15 @@ export default async function CaptionsPage({ searchParams }: PageProps) {
     <div className="mx-auto w-full max-w-[1400px]">
       <header className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1">
-          <p className="text-[0.7rem] uppercase tracking-[0.5em] text-orange-300/80 [font-family:var(--font-heading)]">
+          <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[var(--pc-accent-text)] [font-family:var(--font-heading)]">
             Library
           </p>
-          <h1 className="mt-3 text-[2.75rem] leading-none uppercase tracking-[0.18em] text-zinc-100 sm:text-[3.25rem] lg:text-[3.75rem] [font-family:var(--font-heading)]">
+
+          <h1 className="mt-3 text-[2.75rem] leading-none uppercase tracking-[0.18em] text-[var(--pc-text)] sm:text-[3.25rem] lg:text-[3.75rem] [font-family:var(--font-heading)]">
             Captions
           </h1>
-          <p className="mt-4 max-w-2xl text-sm text-zinc-300/75">
+
+          <p className="mt-4 max-w-2xl text-sm text-[var(--pc-text-muted)]">
             Browse generated captions across all humor flavors or narrow the
             results to a single flavor.
             {selectedFlavorSlug ? ` Current filter: ${selectedFlavorSlug}.` : ""}
@@ -166,11 +168,11 @@ export default async function CaptionsPage({ searchParams }: PageProps) {
 
       <section className="mt-10">
         {errorMessage ? (
-          <p className="text-sm text-rose-200/90">
+          <p className="text-sm text-[var(--pc-danger-text)]">
             Failed to load captions: {errorMessage}
           </p>
         ) : captionRows.length === 0 ? (
-          <p className="text-sm text-zinc-400/80">
+          <p className="text-sm text-[var(--pc-text-faint)]">
             {selectedFlavorSlug
               ? `No captions found for ${selectedFlavorSlug}.`
               : "No captions found."}
@@ -195,16 +197,16 @@ export default async function CaptionsPage({ searchParams }: PageProps) {
                 const likeString = likeCount === 1 ? "Like" : "Likes";
                 const likeTone =
                   likeCount > 0
-                    ? "text-emerald-200 ring-emerald-400/40"
+                    ? "text-[var(--pc-success-text)] ring-[var(--pc-success-ring)]"
                     : likeCount < 0
-                      ? "text-rose-200 ring-rose-400/40"
-                      : "text-zinc-200 ring-white/15";
+                      ? "text-[var(--pc-danger-text)] ring-[var(--pc-danger-ring)]"
+                      : "text-[var(--pc-text)] ring-[color:var(--pc-border)]";
 
                 return (
                   <Card key={String(caption.id)} className="w-full">
                     <div
                       className={[
-                        "absolute right-4 top-4 z-20 rounded-full bg-black/75 px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.28em] ring-1 shadow-[0_10px_24px_rgba(0,0,0,0.35)]",
+                        "absolute right-4 top-4 z-20 rounded-full bg-[var(--pc-surface-elevated)] px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.28em] ring-1 shadow-[0_10px_24px_rgba(0,0,0,0.2)]",
                         likeTone,
                       ].join(" ")}
                     >
@@ -213,7 +215,7 @@ export default async function CaptionsPage({ searchParams }: PageProps) {
                     {imageUrl ? (
                       <Card.Image src={imageUrl} alt="Caption image" />
                     ) : (
-                      <div className="relative z-10 flex aspect-[16/9] w-full items-center justify-center bg-black text-xs uppercase tracking-[0.32em] text-zinc-500 sm:aspect-[7/4]">
+                      <div className="relative z-10 flex aspect-[16/9] w-full items-center justify-center bg-[var(--pc-placeholder-surface)] text-xs uppercase tracking-[0.32em] text-[var(--pc-placeholder-text)] sm:aspect-[7/4]">
                         Image unavailable
                       </div>
                     )}

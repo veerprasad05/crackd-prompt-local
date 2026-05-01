@@ -21,12 +21,12 @@ export default function SortDropdown({ value, options }: SortDropdownProps) {
   };
 
   return (
-    <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-muted)] shadow-[0_12px_28px_rgba(0,0,0,0.18)]">
+    <label className="flex max-w-full flex-wrap items-center gap-3 rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-muted)] shadow-[0_12px_28px_rgba(0,0,0,0.18)]">
       <span>Sort By</span>
       <select
         value={value}
         onChange={(event) => handleChange(event.target.value)}
-        className="rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-strong)] px-3 py-2 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
+        className="min-w-[12rem] flex-1 rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-strong)] px-3 py-2 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] sm:flex-none"
         aria-label="Sort order"
       >
         {options.map((option) => (

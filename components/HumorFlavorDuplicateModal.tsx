@@ -2,38 +2,68 @@
 
 import * as React from "react";
 import { startTransition } from "react";
-import { Pencil, Plus, X } from "lucide-react";
+import { Copy, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
   applyInsertAuditFields,
-  applyUpdateAuditFields,
   getAuthenticatedUserId,
 } from "@/lib/supabase/audit";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
-type HumorFlavorEditModalProps = {
-  flavorId?: number;
-  slug?: string;
-  description?: string | null;
-  triggerIcon?: "edit" | "create";
-  triggerAriaLabel?: string;
+type HumorFlavorStepToDuplicate = {
+  orderBy: number;
+  stepTypeId: number;
+  modelId: number;
+  inputTypeId: number;
+  outputTypeId: number;
+  llmTemperature: number | null;
+  description: string | null;
+  llmUserPrompt: string | null;
+  llmSystemPrompt: string | null;
 };
 
-export default function HumorFlavorEditModal({
-  flavorId,
-  slug = "",
-  description = null,
-  triggerIcon = "edit",
-  triggerAriaLabel,
-}: HumorFlavorEditModalProps) {
+type HumorFlavorDuplicateModalProps = {
+  sourceSlug: string;
+  sourceDescription: string | null;
+  steps: HumorFlavorStepToDuplicate[];
+  existingSlugs: string[];
+};
+
+function normalizeSlug(slug: string) {
+  return slug.trim().toLowerCase();
+}
+
+function buildDuplicateSlug(sourceSlug: string, existingSlugs: string[]) {
+  const trimmedSourceSlug = sourceSlug.trim();
+  const rootSlug =
+    trimmedSourceSlug.length > 0 ? `${trimmedSourceSlug}-copy` : "copy";
+  const normalizedSlugs = new Set(existingSlugs.map(normalizeSlug));
+
+  if (!normalizedSlugs.has(normalizeSlug(rootSlug))) {
+    return rootSlug;
+  }
+
+  let suffix = 2;
+
+  while (normalizedSlugs.has(normalizeSlug(`${rootSlug}-${String(suffix)}`))) {
+    suffix += 1;
+  }
+
+  return `${rootSlug}-${String(suffix)}`;
+}
+
+export default function HumorFlavorDuplicateModal({
+  sourceSlug,
+  sourceDescription,
+  steps,
+  existingSlugs,
+}: HumorFlavorDuplicateModalProps) {
   const router = useRouter();
-  const isCreateMode = typeof flavorId !== "number";
   const [isMounted, setIsMounted] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
-  const [nextSlug, setNextSlug] = React.useState(slug);
-  const [nextDescription, setNextDescription] = React.useState(
-    description ?? ""
+  const [nextSlug, setNextSlug] = React.useState(() =>
+    buildDuplicateSlug(sourceSlug, existingSlugs)
   );
   const [error, setError] = React.useState<string | null>(null);
   const [isWorking, setIsWorking] = React.useState(false);
@@ -45,11 +75,10 @@ export default function HumorFlavorEditModal({
 
   React.useEffect(() => {
     if (!isOpen) {
-      setNextSlug(slug);
-      setNextDescription(description ?? "");
+      setNextSlug(buildDuplicateSlug(sourceSlug, existingSlugs));
       setError(null);
     }
-  }, [description, isOpen, slug]);
+  }, [existingSlugs, isOpen, sourceSlug]);
 
   const closeModal = () => {
     if (isWorking) {
@@ -60,7 +89,7 @@ export default function HumorFlavorEditModal({
     setError(null);
   };
 
-  const handleSave = async () => {
+  const handleDuplicate = async () => {
     const trimmedSlug = nextSlug.trim();
 
     if (trimmedSlug.length === 0) {
@@ -68,46 +97,82 @@ export default function HumorFlavorEditModal({
       return;
     }
 
+    const slugAlreadyExists = existingSlugs.some(
+      (slug) => normalizeSlug(slug) === normalizeSlug(trimmedSlug)
+    );
+
+    if (slugAlreadyExists) {
+      setError("Slug must be unique.");
+      return;
+    }
+
+    const supabase = createSupabaseBrowserClient();
+    let createdFlavorId: number | null = null;
+
     try {
       setIsWorking(true);
       setError(null);
 
-      const supabase = createSupabaseBrowserClient();
       const timestamp = new Date().toISOString();
       const userId = await getAuthenticatedUserId(supabase);
-      const basePayload = {
-        slug: trimmedSlug,
-        description:
-          nextDescription.trim().length > 0 ? nextDescription.trim() : null,
-      };
 
-      if (isCreateMode) {
-        const { error: insertError } = await supabase
-          .from("humor_flavors")
-          .insert(
-            applyInsertAuditFields(basePayload, {
+      const { data: createdFlavor, error: insertFlavorError } = await supabase
+        .from("humor_flavors")
+        .insert(
+          applyInsertAuditFields(
+            {
+              slug: trimmedSlug,
+              description: sourceDescription,
+            },
+            {
               timestamp,
               userId,
-            })
-          );
-
-        if (insertError) {
-          throw new Error(insertError.message);
-        }
-      } else {
-        const { error: updateError } = await supabase
-          .from("humor_flavors")
-          .update(
-            applyUpdateAuditFields(basePayload, {
-              modifiedAtField: "modified_datetime_utc",
-              timestamp,
-              userId,
-            })
+            }
           )
-          .eq("id", flavorId);
+        )
+        .select("id")
+        .single();
 
-        if (updateError) {
-          throw new Error(updateError.message);
+      if (insertFlavorError) {
+        throw new Error(insertFlavorError.message);
+      }
+
+      const parsedFlavorId = Number(createdFlavor?.id);
+
+      if (!Number.isFinite(parsedFlavorId)) {
+        throw new Error("Failed to determine the duplicated humor flavor id.");
+      }
+
+      createdFlavorId = parsedFlavorId;
+
+      if (steps.length > 0) {
+        const duplicatedSteps = steps.map((step) =>
+          applyInsertAuditFields(
+            {
+              humor_flavor_id: parsedFlavorId,
+              order_by: step.orderBy,
+              humor_flavor_step_type_id: step.stepTypeId,
+              llm_model_id: step.modelId,
+              llm_input_type_id: step.inputTypeId,
+              llm_output_type_id: step.outputTypeId,
+              llm_temperature: step.llmTemperature,
+              description: step.description,
+              llm_user_prompt: step.llmUserPrompt,
+              llm_system_prompt: step.llmSystemPrompt,
+            },
+            {
+              timestamp,
+              userId,
+            }
+          )
+        );
+
+        const { error: insertStepsError } = await supabase
+          .from("humor_flavor_steps")
+          .insert(duplicatedSteps);
+
+        if (insertStepsError) {
+          throw new Error(insertStepsError.message);
         }
       }
 
@@ -116,12 +181,25 @@ export default function HumorFlavorEditModal({
         router.refresh();
       });
     } catch (nextError) {
+      let cleanupSuffix = "";
+
+      if (createdFlavorId !== null) {
+        const { error: cleanupError } = await supabase
+          .from("humor_flavors")
+          .delete()
+          .eq("id", createdFlavorId);
+
+        if (cleanupError) {
+          cleanupSuffix = " Cleanup may be required.";
+        }
+      }
+
       setError(
-        nextError instanceof Error
-          ? nextError.message
-          : isCreateMode
-            ? "Failed to create humor flavor."
-            : "Failed to update humor flavor."
+        `${
+          nextError instanceof Error
+            ? nextError.message
+            : "Failed to duplicate humor flavor."
+        }${cleanupSuffix}`
       );
     } finally {
       setIsWorking(false);
@@ -133,19 +211,10 @@ export default function HumorFlavorEditModal({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-accent-text)] transition hover:bg-[var(--pc-accent-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
-        aria-label={
-          triggerAriaLabel ??
-          (isCreateMode
-            ? "Create humor flavor"
-            : `Edit humor flavor ${slug}`)
-        }
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] transition hover:text-[var(--pc-accent-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
+        aria-label={`Duplicate humor flavor ${sourceSlug}`}
       >
-        {triggerIcon === "create" ? (
-          <Plus className="h-4 w-4" />
-        ) : (
-          <Pencil className="h-4 w-4" />
-        )}
+        <Copy className="h-4 w-4" />
       </button>
 
       {isMounted && isOpen
@@ -158,7 +227,7 @@ export default function HumorFlavorEditModal({
                       Humor Flavors
                     </p>
                     <h2 className="mt-3 text-3xl uppercase tracking-[0.16em] text-[var(--pc-text)] [font-family:var(--font-heading)]">
-                      {isCreateMode ? "Create Humor Flavor" : "Edit Humor Flavor"}
+                      Duplicate Humor Flavor
                     </h2>
                   </div>
 
@@ -167,16 +236,21 @@ export default function HumorFlavorEditModal({
                     onClick={closeModal}
                     disabled={isWorking}
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-text-muted)] transition hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
-                    aria-label="Close humor flavor modal"
+                    aria-label="Close duplicate humor flavor modal"
                   >
                     <X className="h-5 w-5" />
                   </button>
                 </div>
 
+                <p className="mt-6 text-sm text-[var(--pc-text-muted)]">
+                  Duplicate "{sourceSlug}" and copy all of its steps into a new
+                  humor flavor.
+                </p>
+
                 <div className="mt-6 grid gap-4">
                   <label className="grid gap-2">
                     <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
-                      Slug
+                      New Slug
                     </span>
                     <input
                       type="text"
@@ -186,23 +260,16 @@ export default function HumorFlavorEditModal({
                     />
                   </label>
 
-                  <label className="grid gap-2">
-                    <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
-                      Description
-                    </span>
-                    <textarea
-                      value={nextDescription}
-                      onChange={(event) =>
-                        setNextDescription(event.target.value)
-                      }
-                      rows={5}
-                      className="min-h-[8rem] rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
-                    />
-                  </label>
+                  <p className="text-[0.7rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
+                    {steps.length} {steps.length === 1 ? "step" : "steps"} will
+                    be copied.
+                  </p>
                 </div>
 
                 {error ? (
-                  <p className="mt-4 text-sm text-[var(--pc-danger-text)]">{error}</p>
+                  <p className="mt-4 text-sm text-[var(--pc-danger-text)]">
+                    {error}
+                  </p>
                 ) : null}
 
                 <div className="mt-6 flex justify-end gap-3">
@@ -216,17 +283,11 @@ export default function HumorFlavorEditModal({
                   </button>
                   <button
                     type="button"
-                    onClick={handleSave}
+                    onClick={handleDuplicate}
                     disabled={isWorking}
                     className="rounded-xl bg-[var(--pc-accent-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)] shadow-[0_0_24px_rgba(255,120,0,0.12)] transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {isWorking
-                      ? isCreateMode
-                        ? "Creating..."
-                        : "Saving..."
-                      : isCreateMode
-                        ? "Create"
-                        : "Save"}
+                    {isWorking ? "Duplicating..." : "Duplicate"}
                   </button>
                 </div>
               </div>

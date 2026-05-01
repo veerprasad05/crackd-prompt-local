@@ -206,10 +206,10 @@ export default async function HumorFlavorsPage({ searchParams }: PageProps) {
     <section>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1">
-          <h2 className="text-[2rem] leading-none uppercase tracking-[0.16em] text-zinc-100 sm:text-[2.5rem] [font-family:var(--font-heading)]">
+          <h2 className="text-[2rem] leading-none uppercase tracking-[0.16em] text-[var(--pc-text)] sm:text-[2.5rem] [font-family:var(--font-heading)]">
             Humor Flavors
           </h2>
-          <p className="mt-4 max-w-2xl text-sm text-zinc-300/75">
+          <p className="mt-4 max-w-2xl text-sm text-[var(--pc-text-muted)]">
             Browse existing humor flavors, expand each flavor to inspect its
             ordered steps, and delete a flavor when it is no longer needed.
           </p>
@@ -226,11 +226,11 @@ export default async function HumorFlavorsPage({ searchParams }: PageProps) {
 
       <div className="mt-10">
         {errorMessage ? (
-          <p className="text-sm text-rose-200/90">
+          <p className="text-sm text-[var(--pc-danger-text)]">
             Failed to load humor flavors: {errorMessage}
           </p>
         ) : flavorRows.length === 0 ? (
-          <p className="text-sm text-zinc-400/80">
+          <p className="text-sm text-[var(--pc-text-faint)]">
             {mineOnly
               ? "No humor flavors created by you were found."
               : "No humor flavors found."}

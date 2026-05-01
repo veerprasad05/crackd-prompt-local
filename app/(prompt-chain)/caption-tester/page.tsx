@@ -20,7 +20,7 @@ export default async function CaptionTesterPage() {
   return (
     <>
       {error ? (
-        <p className="mb-6 text-sm text-rose-200/90">
+        <p className="mb-6 text-sm text-[var(--pc-danger-text)]">
           Failed to load humor flavors: {error.message}
         </p>
       ) : null}
