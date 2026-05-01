@@ -13,7 +13,7 @@ export default async function HelloWorldPage() {
   }
 
   return (
-    <h1 className="text-[2.75rem] leading-none uppercase tracking-[0.18em] text-zinc-100 [font-family:var(--font-heading)] sm:text-[3.25rem] lg:text-[3.75rem]">
+    <h1 className="text-[2.75rem] leading-none uppercase tracking-[0.18em] text-[var(--pc-text)] [font-family:var(--font-heading)] sm:text-[3.25rem] lg:text-[3.75rem]">
       <TextType
         text={["Hello World!", "Crackd Prompt Chain"]}
         typingSpeed={75}

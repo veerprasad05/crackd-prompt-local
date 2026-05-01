@@ -233,13 +233,13 @@ export default function HumorFlavorStepEditModal({
     onChange: (value: string) => void
   ) => (
     <label className="grid gap-2">
-      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
         {label}
       </span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+        className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
       >
         <option value="">Select {label}</option>
         {options.map((option) => (
@@ -256,7 +256,7 @@ export default function HumorFlavorStepEditModal({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-orange-200 ring-1 ring-orange-400/40 transition hover:bg-orange-500/15 hover:text-orange-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/70"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] text-[var(--pc-accent-text)] transition hover:bg-[var(--pc-accent-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
         aria-label={
           triggerAriaLabel ??
           (isCreateMode
@@ -273,8 +273,8 @@ export default function HumorFlavorStepEditModal({
 
       {isMounted && isOpen
         ? createPortal(
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-6 py-8 backdrop-blur-sm">
-              <div className="flex h-[90vh] w-full max-w-4xl flex-col rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface-strong)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--pc-overlay)] px-6 py-8 backdrop-blur-sm">
+              <div className="flex h-[90vh] w-full max-w-4xl flex-col rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface-elevated)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[var(--pc-accent-text)] [font-family:var(--font-heading)]">
@@ -298,7 +298,7 @@ export default function HumorFlavorStepEditModal({
 
                 <div className="mt-6 min-h-0 flex-1 overflow-y-auto pr-2">
                   {isCreateMode && defaultHumorFlavorLabel ? (
-                    <p className="mb-4 text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                    <p className="mb-4 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                       New step for {defaultHumorFlavorLabel}. It will be created
                       as step {String(defaultOrderBy ?? "")}.
                     </p>
@@ -307,10 +307,10 @@ export default function HumorFlavorStepEditModal({
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {isCreateMode && defaultHumorFlavorLabel ? (
                       <label className="grid gap-2">
-                        <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+                        <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                           Humor Flavor
                         </span>
-                        <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100">
+                        <div className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-4 py-3 text-sm text-[var(--pc-text)]">
                           {defaultHumorFlavorLabel}
                         </div>
                       </label>
@@ -328,7 +328,7 @@ export default function HumorFlavorStepEditModal({
                     )}
 
                     <label className="grid gap-2">
-                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                         Temperature
                       </span>
                       <input
@@ -341,7 +341,7 @@ export default function HumorFlavorStepEditModal({
                             llmTemperature: event.target.value,
                           }))
                         }
-                        className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+                        className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
                       />
                     </label>
 
@@ -392,7 +392,7 @@ export default function HumorFlavorStepEditModal({
 
                   <div className="mt-4 grid gap-4">
                     <label className="grid gap-2">
-                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                         Description
                       </span>
                       <textarea
@@ -404,12 +404,12 @@ export default function HumorFlavorStepEditModal({
                           }))
                         }
                         rows={4}
-                        className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+                        className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
                       />
                     </label>
 
                     <label className="grid gap-2">
-                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                         User Prompt
                       </span>
                       <textarea
@@ -421,12 +421,12 @@ export default function HumorFlavorStepEditModal({
                           }))
                         }
                         rows={6}
-                        className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+                        className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
                       />
                     </label>
 
                     <label className="grid gap-2">
-                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-400">
+                      <span className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                         System Prompt
                       </span>
                       <textarea
@@ -438,13 +438,15 @@ export default function HumorFlavorStepEditModal({
                           }))
                         }
                         rows={6}
-                        className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+                        className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-4 py-3 text-sm text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
                       />
                     </label>
                   </div>
 
                   {error ? (
-                    <p className="mt-4 text-sm text-rose-200/90">{error}</p>
+                    <p className="mt-4 text-sm text-[var(--pc-danger-text)]">
+                      {error}
+                    </p>
                   ) : null}
                 </div>
 
@@ -453,7 +455,7 @@ export default function HumorFlavorStepEditModal({
                     type="button"
                     onClick={closeModal}
                     disabled={isWorking}
-                    className="rounded-xl bg-black/40 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-zinc-300/80 ring-1 ring-white/10 transition-colors hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-text-muted)] transition-colors hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     Cancel
                   </button>
@@ -461,7 +463,7 @@ export default function HumorFlavorStepEditModal({
                     type="button"
                     onClick={handleSave}
                     disabled={isWorking}
-                    className="rounded-xl bg-orange-500/15 px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-orange-200 ring-2 ring-orange-400/50 shadow-[0_0_24px_rgba(255,120,0,0.2)] transition-colors hover:bg-orange-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl bg-[var(--pc-accent-soft)] px-4 py-3 text-[0.7rem] uppercase tracking-[0.32em] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)] shadow-[0_0_24px_rgba(255,120,0,0.12)] transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isWorking
                       ? isCreateMode

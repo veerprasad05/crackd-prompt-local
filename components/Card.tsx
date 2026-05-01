@@ -61,7 +61,7 @@ function CardImage({ src, alt = "Card image", className }: CardImageProps) {
       <img
         src={src}
         alt={alt}
-        className="h-full w-full bg-[var(--pc-surface-muted)] object-contain"
+        className="h-full w-full bg-[var(--pc-placeholder-surface)] object-contain"
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/0 via-black/0 to-black/70" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/55 to-transparent" />

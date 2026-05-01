@@ -279,26 +279,26 @@ export default function CaptionTesterWorkspace({
 
   return (
     <section>
-      <div className="rounded-[2rem] border border-white/10 bg-[#15151b]/85 p-6 shadow-[0_18px_40px_rgba(0,0,0,0.55)]">
-        <p className="text-[0.7rem] uppercase tracking-[0.5em] text-orange-300/80 [font-family:var(--font-heading)]">
+      <div className="rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface)] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.18)]">
+        <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[var(--pc-accent-text)] [font-family:var(--font-heading)]">
           Workspace
         </p>
-        <h2 className="mt-3 text-[2rem] leading-none uppercase tracking-[0.16em] text-zinc-100 sm:text-[2.5rem] [font-family:var(--font-heading)]">
+        <h2 className="mt-3 text-[2rem] leading-none uppercase tracking-[0.16em] text-[var(--pc-text)] sm:text-[2.5rem] [font-family:var(--font-heading)]">
           Caption Tester
         </h2>
-        <p className="mt-4 max-w-3xl text-sm text-zinc-300/75">
+        <p className="mt-4 max-w-3xl text-sm text-[var(--pc-text-muted)]">
           Select a humor flavor, upload up to {MAX_UPLOAD_IMAGES} images, and
           generate up to {MAX_CAPTIONS_PER_IMAGE} captions per image using the
           prompt-chain API pipeline.
         </p>
 
         <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-end">
-          <label className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/30 p-4 text-[0.65rem] uppercase tracking-[0.28em] text-zinc-300/80">
+          <label className="flex flex-col gap-3 rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] p-4 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-muted)]">
             <span>Humor Flavor</span>
             <select
               value={selectedFlavorId}
               onChange={(event) => setSelectedFlavorId(event.target.value)}
-              className="rounded-xl border border-white/10 bg-[#101016] px-3 py-3 text-[0.7rem] uppercase tracking-[0.2em] text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60"
+              className="rounded-xl border border-[color:var(--pc-border)] bg-[var(--pc-input-surface)] px-3 py-3 text-[0.7rem] uppercase tracking-[0.2em] text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)]"
               disabled={humorFlavors.length === 0 || isSubmitting}
             >
               {humorFlavors.length === 0 ? (
@@ -317,7 +317,7 @@ export default function CaptionTesterWorkspace({
             type="button"
             onClick={handlePickImages}
             disabled={isSubmitting}
-            className="rounded-2xl bg-black/40 px-5 py-4 text-[0.65rem] uppercase tracking-[0.28em] text-zinc-300/80 ring-1 ring-white/10 transition hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-5 py-4 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-muted)] transition hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {hasItems ? "Replace Images" : "Upload Images"}
           </button>
@@ -328,7 +328,7 @@ export default function CaptionTesterWorkspace({
             disabled={
               isSubmitting || !hasItems || selectedFlavorId.length === 0
             }
-            className="rounded-2xl bg-orange-500/15 px-5 py-4 text-[0.65rem] uppercase tracking-[0.28em] text-orange-200 ring-2 ring-orange-400/50 shadow-[0_0_24px_rgba(255,120,0,0.2)] transition-colors hover:bg-orange-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-2xl bg-[var(--pc-accent-soft)] px-5 py-4 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-accent-text)] ring-2 ring-[var(--pc-accent-ring)] shadow-[0_0_24px_rgba(255,120,0,0.12)] transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? "Generating..." : "Generate Captions"}
           </button>
@@ -344,14 +344,14 @@ export default function CaptionTesterWorkspace({
         />
 
         {error ? (
-          <p className="mt-4 text-sm text-rose-200/90">{error}</p>
+          <p className="mt-4 text-sm text-[var(--pc-danger-text)]">{error}</p>
         ) : null}
       </div>
 
       <div className="mt-8">
         {!hasItems ? (
-          <div className="rounded-[2rem] border border-white/10 bg-[#15151b]/85 p-6 shadow-[0_18px_40px_rgba(0,0,0,0.55)]">
-            <p className="text-sm text-zinc-400/80">
+          <div className="rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface)] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.18)]">
+            <p className="text-sm text-[var(--pc-text-faint)]">
               Upload a batch of images to start testing a humor flavor.
             </p>
           </div>
@@ -360,23 +360,25 @@ export default function CaptionTesterWorkspace({
             {items.map((item) => (
               <div
                 key={item.id}
-                className="rounded-[2rem] border border-white/10 bg-[#15151b]/85 p-6 shadow-[0_18px_40px_rgba(0,0,0,0.55)]"
+                className="rounded-[2rem] border border-[color:var(--pc-border)] bg-[var(--pc-surface)] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.18)]"
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[0.65rem] uppercase tracking-[0.28em] text-zinc-500">
+                    <p className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-faint)]">
                       Image
                     </p>
-                    <h3 className="mt-2 text-lg uppercase tracking-[0.14em] text-zinc-100 [font-family:var(--font-heading)]">
+                    <h3 className="mt-2 text-lg uppercase tracking-[0.14em] text-[var(--pc-text)] [font-family:var(--font-heading)]">
                       {item.fileName}
                     </h3>
                     {item.status ? (
-                      <p className="mt-3 text-[0.65rem] uppercase tracking-[0.32em] text-orange-200/80">
+                      <p className="mt-3 text-[0.65rem] uppercase tracking-[0.32em] text-[var(--pc-accent-text)]">
                         {item.status}
                       </p>
                     ) : null}
                     {item.error ? (
-                      <p className="mt-3 text-sm text-rose-200/90">{item.error}</p>
+                      <p className="mt-3 text-sm text-[var(--pc-danger-text)]">
+                        {item.error}
+                      </p>
                     ) : null}
                   </div>
 
@@ -384,25 +386,25 @@ export default function CaptionTesterWorkspace({
                     type="button"
                     onClick={() => handleRemoveImage(item.id)}
                     disabled={isSubmitting || item.isWorking}
-                    className="rounded-2xl bg-black/40 px-4 py-3 text-[0.65rem] uppercase tracking-[0.28em] text-zinc-300/80 ring-1 ring-white/10 transition hover:bg-black/60 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-2xl border border-[color:var(--pc-border)] bg-[var(--pc-surface-soft)] px-4 py-3 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--pc-text-muted)] transition hover:text-[var(--pc-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pc-accent-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     Remove
                   </button>
                 </div>
 
                 {item.captions.length === 0 ? (
-                  <div className="mt-6 max-w-sm overflow-hidden rounded-2xl ring-1 ring-white/10">
+                  <div className="mt-6 max-w-sm overflow-hidden rounded-2xl ring-1 ring-[color:var(--pc-border)]">
                     <img
                       src={item.previewUrl}
                       alt={item.fileName}
-                      className="mx-auto h-44 w-full bg-black object-contain"
+                      className="mx-auto h-44 w-full bg-[var(--pc-placeholder-surface)] object-contain"
                     />
                   </div>
                 ) : null}
 
                 <div className="mt-6">
                   {item.captions.length === 0 ? (
-                    <p className="text-sm text-zinc-400/80">
+                    <p className="text-sm text-[var(--pc-text-faint)]">
                       Generated captions for this image will appear here.
                     </p>
                   ) : (
